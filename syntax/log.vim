@@ -101,6 +101,32 @@ syn keyword logLevelInfo INFO
 syn keyword logLevelDebug DEBUG FINE
 syn keyword logLevelTrace TRACE FINER FINEST
 
+" Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+syn match glogContent    '[IWEF]\d\{4}\s\+.*$' contains=glogHeader,glogFilePath2
+syn match glogHeader     '[IWEF]\d\{4}\s\+[^\]]\+]\(\s\+"[^"]\+"\)\?' containedin=glogContent contains=glogInfo,glogWarning,glogError,glogFatal,glogTime,glogThreadid,glogFilePath,glogMsg
+syn match glogFatal      'F\d\{4}' contained containedin=glogHeader nextgroup=glogTime
+syn match glogError      'E\d\{4}' contained containedin=glogHeader nextgroup=glogTime
+syn match glogWarning    'W\d\{4}' contained containedin=glogHeader nextgroup=glogTime
+syn match glogInfo       'I\d\{4}' contained containedin=glogHeader nextgroup=glogTime
+syn match glogTime       '\s\+\d\{2}:\d\{2}:\d\{2}\.\d\{6}' contained containedin=glogHeader nextgroup=glogThreadid
+syn match glogThreadid   '\s\+\d\+' contained containedin=glogHeader nextgroup=glogFilePath
+syn match glogFilePath   '\s\+[^\n|,; '"]\+\:\d\+' contained containedin=glogHeader nextgroup=glogMsg
+syn match glogMsg        '\s\+"[^"]\+"' contained containedin=glogHeader
+syn match glogFilePath2  '\s\+[^\n|,; '"]\+\:\d\+'
+
+hi def link glogContent   Comment
+hi def link glogHeader    Comment
+hi def link glogTime      Function
+hi def link glogThreadid  Include
+hi def link glogFilePath  Underlined
+hi def link glogFatal     ErrorMsg
+hi def link glogError     ErrorMsg
+hi def link glogWarning   WarningMsg
+hi def link glogInfo      Repeat
+hi def link glogMsg       Label
+hi def link glogFilePath2 Comment
+
+
 
 " Highlight links
 "---------------------------------------------------------------------------
@@ -151,7 +177,6 @@ hi def link logLevelNotice Character
 hi def link logLevelInfo Repeat
 hi def link logLevelDebug Debug
 hi def link logLevelTrace Comment
-
 
 
 let b:current_syntax = 'log'
